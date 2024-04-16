@@ -1,0 +1,84 @@
+<%- include('./partials/head.ejs') %>
+    <body>
+        <!-- Sidebar -->
+        <%- include('./partials/aside.ejs') %>
+
+        <!-- Main Content -->
+        <section class="dashbaord-content">
+            <header>
+                <nav>
+                    <div class="font-change-btn">
+                        <div class="search-btn">
+                            <a href="/dashboard" class="btn">Dashboard</a>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+            <main class="main-height">
+                <div class="container mt-4">
+                    <h2 class="mb-3">Orders</h2>
+                    <form id="orderForm" method="post">
+                       
+                        <table id="artTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Sale Id</th>
+                                    <th>Customer's Name</th>
+                                    <th>Art Title</th>
+                                    <th>Price</th>
+                                    <th>Sale Status</th>
+                                    <th>Sale Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% orderss.forEach(function(orders) { %>
+                                  <tr>
+                                    <td>
+                                      <%= orders.sale_id %>
+                                    </td>
+                                    <td>
+                                      <%= orders.customer_name %>
+                                    </td>
+                                   
+                                    <td>
+                                      <%= orders.art_title %>
+                                    </td>
+                                    <td>
+                                      <%= orders.price %>
+                                    </td>
+                                    <td>
+                                      <%= orders.sale_status %>
+                                    </td>
+                                    <td>
+                                      <%= orders.sale_date %>
+                                    </td>   
+                                    
+                                    <td class="d-flex justify-content-evenly">
+                                      
+                                        <form action="/generate-invoice" method="post">
+                                            <input type="hidden" name="sale_id" value="<%= orders.sale_id %>">
+                                            <button type="submit" class="btn">Generate Invoice</button>
+                                          </form>
+
+                                      </td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                        <div id="artMessage"></div>
+                    </form>
+                </div>
+
+            </main>
+
+
+        </section>
+
+
+        <%- include('./partials/footer.ejs') %>
+
+        <%- include('./partials/script.ejs') %>
+
+    </body>
+
+    </html>

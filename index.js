@@ -655,3 +655,23 @@ console.log("HELLO 1")
     res.status(500).send("Internal Server Error");
   }
 });
+
+// Added by Khush
+app.get("/order", async (req, res) => {
+  try {
+    // Fetch necessary columns from the database using JOINs
+    const orderss = await pool.query(`
+      SELECT sales.sale_id, customers.name AS customer_name, art_pieces.title AS art_title, sales.price, 
+             sales_status.status_name AS sale_status, DATE_FORMAT(sales.sale_date, '%Y-%m-%d') AS sale_date
+      FROM sales
+      JOIN customers ON sales.customer_id = customers.customer_id
+      JOIN art_pieces ON sales.art_piece_id = art_pieces.art_piece_id
+      JOIN sales_status ON sales.status_id = sales_status.status_id
+    `);
+
+    res.render("order.ejs", { orderss: orderss[0]}); 
+  } catch (err) {
+    console.error("Error rendering Order List page: " + err.stack);
+    res.status(500).send("Error rendering Order List page");
+  }
+});
