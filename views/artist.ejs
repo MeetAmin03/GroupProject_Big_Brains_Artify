@@ -1,0 +1,75 @@
+<%- include('./partials/head.ejs') %>
+
+<body>
+
+  <!-- Sidebar -->
+  <%- include('./partials/aside.ejs') %>
+
+  <!-- Main Content -->
+  <section class="dashbaord-content">
+    <header>
+      <nav>
+        <div class="font-change-btn">
+          <div class="search-btn">
+            <a href="/dashboard" class="btn">Dashboard</a>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main class="main-height">
+      <div class="container mt-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h2 class="mb-3">Artist Records</h2>
+          <form action="/artist-pdf" method="post">
+            <button type="submit" class="btn">Artist List</button>
+          </form>
+        </div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Artist ID</th>
+              <th>Name</th>
+              <th>Nationality</th>
+              <th>Style</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% artists.forEach(function(artist) { %>
+              <tr>
+                <td>
+                  <%= artist.artist_id %>
+                </td>
+                <td>
+                  <%= artist.name %>
+                </td>
+                <td>
+                  <%= artist.nationality %>
+                </td>
+                <td>
+                  <%= artist.style %>
+                </td>
+                <td class="d-flex justify-content-evenly">
+                  <form action="/delete-artist" method="post">
+                    <input type="hidden" name="artist_id" value="<%= artist.artist_id %>">
+                    <button type="submit" class="btn">Delete</button>
+                  </form>
+                  <form action="/update-artist" method="get">
+                    <input type="hidden" name="artist_id" value="<%= artist.artist_id %>">
+                    <button type="submit" class="btn">Edit</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </section>
+
+  <%- include('./partials/footer.ejs') %>
+
+  <%- include('./partials/script.ejs') %>
+
+</body>
+
+</html>
