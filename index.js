@@ -1,3 +1,5 @@
+// Added By Meet
+
 import express from "express";
 import mysql from "mysql2";
 
@@ -454,5 +456,202 @@ app.get("/art-list", async (req, res) => {
   } catch (err) {
     console.error("Error fetching Art List from the database:", err);
     res.status(500).send("Error fetching Art List from the database");
+  }
+});
+
+// Added By Meet
+
+
+app.post("/generate-invoice", async (req, res) => {
+  try {
+
+console.log("HELLO 1")
+
+    const saleId = req.body.sale_id;
+
+    // SQL query to fetch data for the invoice
+    const query = `
+    SELECT 
+        CONCAT(c.name) AS ClientName, 
+        a.street AS Add1, 
+        CONCAT(a.city, ',', a.state) AS Add2,
+        a.zipcode AS ZipCode, 
+        s.sale_id AS InvoiceNumber, 
+        DATE_FORMAT(s.sale_date, '%Y-%m-%d') AS InvoiceDate,
+        ap.title AS ProductName,
+        ap.medium AS ProductDescription, 
+        s.price AS UnitCost, 
+        ss.status_name AS SaleStatus,
+        s.price AS Amount
+    FROM sales s
+    INNER JOIN customers c ON c.customer_id = s.customer_id
+    INNER JOIN address a ON a.customer_id = c.customer_id
+    INNER JOIN art_pieces ap ON ap.art_piece_id = s.art_piece_id
+    INNER JOIN sales_status ss ON ss.status_id = s.status_id -- New JOIN
+    WHERE s.sale_id = ?`;
+
+    // Fetch data from the database based on saleId
+    const [result] = await pool.query(query, [saleId]);
+
+    if (result.length === 0) {
+      return res.status(404).send("Sale not found");
+    }
+
+    // Generate PDF document
+    const doc = new PDFDocument();
+    // doc.pipe(res);
+
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(36)
+      .text("INVOICE", { align: "left" })
+      .moveDown(0.5);
+
+    // Add company header and details
+    const logoWidth = 100;
+    const logoHeight = 75;
+    const pageWidth = 612;
+    const logoX = pageWidth - logoWidth - 50;
+    doc.image("public/images/logo.png", logoX, 50, {
+      width: logoWidth,
+      height: logoHeight,
+    });
+
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(16)
+      .text("Artify : Art Gallery", { align: "left" })
+      .moveDown(0.5);
+    doc.font("Helvetica").fontSize(12);
+    doc.text("108, University Ave", { align: "left" }).moveDown(0.2);
+    doc.text("Waterloo, Ontario", { align: "left" }).moveDown(0.2);
+    doc.text("N2J 2W2", { align: "left" }).moveDown(0.2);
+
+    // Add billed to section
+    doc.moveDown(0.5);
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(14)
+      .text("Billed To", { align: "left" })
+      .moveDown(0.5);
+    doc.font("Helvetica").fontSize(12);
+    doc.text(`${result[0].ClientName}`);
+    doc.text(`${result[0].Add1}`);
+    doc.text(`${result[0].Add2} ${result[0].ZipCode}`);
+
+    // Add invoice details
+    doc.moveDown(0.5);
+    doc.text(`Invoice Number: ${result[0].InvoiceNumber}`);
+    doc.text(`Date of Issue: ${result[0].InvoiceDate}`);
+
+    // Adjust yOffset after printing invoice details
+    let yOffset = doc.y + 30;
+
+    // Print table headers with padding for better alignment
+    doc.text("Art Title", 73, yOffset - 8, { width: 80 });
+    doc.text("Medium", 305, yOffset - 8, {
+      width: 80,
+      align: "right",
+    });
+    doc.text("Sale Status", 405, yOffset - 8, {
+      width: 80,
+      align: "right",
+    });
+    doc.text("Amount", 505, yOffset - 8, { width: 80, align: "right" });
+
+    // Draw line below table headers
+    doc.moveTo(73, yOffset + 4);
+    doc.lineTo(585, yOffset + 4);
+    doc.stroke();
+
+    doc.moveDown(0.5);
+    // Reset color to default (black) for data text
+    doc.fillColor("black"); // Black text color for data
+
+    // Print each row of data
+    for (const row of result) {
+      doc.text(
+        `${row.ProductName}`,
+        73,
+        yOffset + 8
+      );
+      doc.text(row.ProductDescription, 305, yOffset + 8, {
+        width: 80,
+        align: "right",
+      });
+      doc.text(row.SaleStatus, 405, yOffset + 8, {
+        width: 80,
+        align: "right",
+      });
+      doc.text(row.Amount, 505, yOffset + 8, {
+        width: 80,
+        align: "right",
+      });
+
+      // Increment Y offset for the next row
+      yOffset += 20;
+    }
+
+    // Draw line after table data
+    doc.moveTo(73, yOffset + 4);
+    doc.lineTo(585, yOffset + 4);
+    doc.stroke();
+
+    // Add some space below the table
+    yOffset += 20;
+
+    // Print labels for Tax (10%) and Grand Total below Qty/Hr Rate header
+    doc.text("Subtotal:", 400, yOffset, { width: 90, align: "right" });
+    doc.text("Tax (13%):", 400, yOffset + 20, {
+      width: 90,
+      align: "right",
+    });
+    doc.text("Grand Total:", 400, yOffset + 40, {
+      width: 90,
+      align: "right",
+    });
+
+    // Calculate subtotal
+    let subtotal = 0;
+
+    for (const row of result) {
+      subtotal += parseFloat(row.Amount);
+    }
+
+    console.log(subtotal);
+
+    // Calculate tax (if applicable)
+    const taxRate = 0.13; // Assuming a tax rate of 10%
+    const tax = subtotal * taxRate;
+
+    // Calculate grand total
+    const grandTotal = subtotal + tax;
+
+    // Print values for Tax (10%) and Grand Total below Amount header after the table
+    doc.text(subtotal, 500, yOffset, {
+      width: 90,
+      align: "right",
+    });
+    doc.text(tax, 500, yOffset + 20, {
+      width: 90,
+      align: "right",
+    });
+    doc.text(grandTotal, 500, yOffset + 40, {
+      width: 90,
+      align: "right",
+    });
+
+    yOffset += 40; // Adjust space below the table to accommodate the note
+
+    // Set PDF headers and send it as response
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", 'inline; filename="invoice.pdf"');
+
+    // Send PDF content as response
+    doc.pipe(res);
+    doc.end();
+  } catch (err) {
+    console.error("Error generating invoice:", err);
+    res.status(500).send("Internal Server Error");
   }
 });
