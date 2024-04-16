@@ -337,3 +337,122 @@ app.post("/update-customer", async (req, res) => {
     res.status(500).send("Error updating customer");
   }
 });
+
+// Added by Khush
+
+// ARTISTS
+
+// Route to render the Add Employee page
+app.get("/add-artist", (req, res) => {
+  try {
+    res.render("add-artist.ejs"); 
+  } catch (err) {
+    console.error("Error rendering Add Customer page: " + err.stack);
+    res.status(500).send("Error rendering Add Customer page");
+  }
+});
+
+app.post("/add-artist", async (req, res) => {
+  try {
+    const { artistName, nationality , style  } = req.body;
+
+    const artistData = {
+      name: artistName,
+      nationality:nationality,
+      style: style,
+    };
+
+    await pool.query("INSERT INTO artists SET ?", artistData);
+
+    console.log("Artists inserted successfully");
+    res.redirect("/artists"); 
+  } catch (err) {
+    console.error("Error inserting artist: " + err.stack);
+    res.status(500).send("Error inserting artist");
+  }
+});
+
+// Route to render the Employee List page
+app.get("/artists", async (req, res) => {
+  try {
+    // Fetch list of customers from the database
+    const artists = await pool.query("SELECT * FROM artists");
+    res.render("artist.ejs", { artists: artists[0] }); 
+  } catch (err) {
+    console.error("Error rendering Artist List page: " + err.stack);
+    res.status(500).send("Error rendering Artist List page");
+  }
+});
+
+app.post("/delete-artist", async (req, res) => {
+  try {
+    const artist_id = req.body.artist_id;
+
+    await pool.query("DELETE FROM artists WHERE artist_id = ?", [
+      artist_id,
+    ]);
+
+    console.log("Artist deleted successfully");
+    res.redirect("/artists"); 
+  } catch (err) {
+    console.error("Error deleting customer: " + err.stack);
+    res.status(500).send("Error deleting customer");
+  }
+});
+
+// Route to render the Update Employee page
+app.get("/update-artist", async (req, res) => {
+  try {
+    const artist_id = req.query.artist_id;
+
+    // Fetch customer details from the database
+    const artistData = await pool.query(
+      "SELECT * FROM artists WHERE artist_id = ?",
+      [artist_id]
+    );
+
+    const artist = artistData[0]; 
+
+    res.render("update-artist.ejs", { artist: artist[0] }); 
+  } catch (err) {
+    console.error("Error rendering Update Customer page: " + err.stack);
+    res.status(500).send("Error rendering Update Customer page");
+  }
+});
+
+app.post("/update-artist", async (req, res) => {
+  try {
+    const {artist_id,name,nationality,style } = req.body;
+
+    console.log("HELLO UPDATE");
+
+    console.log(req.body);
+
+
+    await pool.query(
+      "UPDATE artists SET name = ?, nationality = ?, style = ? WHERE artist_id = ?",
+      [name, nationality , style, artist_id]
+    );
+
+    console.log("Artist updated successfully");
+    res.redirect("/artists"); 
+  } catch (err) {
+    console.error("Error updating Artist: " + err.stack);
+    res.status(500).send("Error updating Artist");
+  }
+});
+
+app.get("/art-list", async (req, res) => {
+  try {
+    const [arts] = await pool.query(
+      `SELECT art_piece_id AS art_piece_id, title AS Title FROM art_pieces`
+    );
+
+    console.log(arts);
+
+    res.json(arts);
+  } catch (err) {
+    console.error("Error fetching Art List from the database:", err);
+    res.status(500).send("Error fetching Art List from the database");
+  }
+});
