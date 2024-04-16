@@ -1,0 +1,88 @@
+<%- include('./partials/head.ejs') %>
+
+
+    <body>
+
+        <!-- Sidebar -->
+        <%- include('./partials/aside.ejs') %>
+
+
+        <!-- Main Content -->
+        <section class="dashbaord-content">
+            <header>
+                <nav>
+                    <div class="font-change-btn">
+                        <div class="search-btn">
+                            <a href="/dashboard" class="btn">Dashboard</a>
+                        </div>
+
+                    </div>
+                    
+                </nav>
+            </header>
+            <main class="main-height">
+                <div class="container mt-4">
+                    <h2 class="mb-3">Arts</h2>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Art ID</th>
+                                <th>Title</th>
+                                <th>Medium</th>
+                                <th>Year Created</th>
+                                <th>Price</th>
+                                <th>Artist ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% arts.forEach(function(art) { %>
+                                <tr>
+                                    <td>
+                                        <%= art.art_piece_id %>
+                                    </td>
+                                    <td>
+                                        <%= art.title %>
+                                    </td>
+                                    <td>
+                                        <%= art.medium %>
+                                    </td>
+                                    <td>
+                                        <%= art.year_created %>
+                                    </td>
+                                    <td>
+                                        <%= art.price %>
+                                    </td>
+                                    <td>
+                                        <%= art.artist_id %>
+                                    </td>
+                                    <td class="d-flex justify-content-evenly">
+
+                                        <form action="/edit-art" method="get">
+                                            <input type="hidden" name="art_piece_id" value="<%= art.art_piece_id %>">
+                                            <button type="submit" class="btn">Edit</button>
+                                        </form>
+
+                                        <form action="/delete-art" method="post" class="ml-1">
+                                            <input type="hidden" name="art_piece_id" value="<%= art.art_piece_id %>">
+                                            <button type="submit" class="btn">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+
+            </main>
+
+
+        </section>
+
+
+        <%- include('./partials/footer.ejs') %>
+        
+        <%- include('./partials/script.ejs') %>
+
+    </body>
+
+    </html>

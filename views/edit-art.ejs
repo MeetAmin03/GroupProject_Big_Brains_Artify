@@ -1,0 +1,65 @@
+<%- include('./partials/head.ejs') %>
+
+
+    <body>
+
+        <%- include('./partials/aside.ejs') %>
+
+        <!-- Main Content -->
+        <section class="dashbaord-content">
+            <header>
+                <nav>
+                    <div class="font-change-btn">
+
+                        <div class="search-btn">
+                            <a href="/dashboard" class="btn">Dashboard</a>
+                        </div>
+                 
+                </nav>
+            </header>
+            <main>
+                <div class="container mt-4">
+                    <h2 class="mb-3">Edit Art Details</h2>
+                    <form action="/edit-art" method="post">
+                        <input type="hidden" name="art_piece_id" value="<%= art.art_piece_id %>">
+                        <div class="form-group">
+                            <label for="title">Title:</label>
+                            <input class="form-control" type="text" id="title" name="title" value="<%= art.title %>"
+                                required>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="medium">Medium:</label>
+                            <input class="form-control" type="text" id="medium" name="medium"
+                                value="<%= art.medium %>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="year_created">Year Created:</label>
+                            <input class="form-control" type="text" id="year_created" name="year_created"
+                                value="<%= art.year_created %>" step="0.01" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="price">Price:</label>
+                            <input class="form-control" type="number" id="price" name="price"
+                                value="<%= art.price %>" step="0.01" required>
+                        </div>
+
+                        <button type="submit" class="btn">Submit</button>
+                    </form>
+                </div>
+
+            </main>
+
+
+        </section>
+
+
+        <%- include('./partials/footer.ejs') %>
+
+        <%- include('./partials/script.ejs') %>
+
+    </body>
+
+    </html>
