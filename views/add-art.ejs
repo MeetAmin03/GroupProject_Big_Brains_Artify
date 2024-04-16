@@ -1,0 +1,102 @@
+<%- include('./partials/head.ejs') %>
+
+<body>
+
+    <!-- Sidebar -->
+    <%- include('./partials/aside.ejs') %>
+
+    <!-- Main Content -->
+    <section class="dashbaord-content">
+        <header>
+            <nav>
+                <div class="font-change-btn">
+                    <div class="search-btn">
+                        <a href="/dashboard" class="btn">Dashboard</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <main>
+            <div class="container mt-4">
+                <h2 class="mb-3">Add New Art</h2>
+                <form id="artForm" action="/add-art" method="POST" onsubmit="return validateForm()">
+                   
+                     <div class="form-group">
+                        <label for="title">Art Title:</label>
+                        <input type="text" class="form-control" id="title" name="title"
+                            placeholder="Enter Art Title">
+                    </div> 
+                    <div class="form-group">
+                        <label for="medium">Medium:</label>
+                        <select class="form-control" id="medium" name="medium">
+                            <option value="">Select Medium</option>
+                            <option value="Oil paint">Oil paint</option>
+                            <option value="Watercolor">Watercolor</option>
+                            <option value="Acrylic paint">Acrylic paint</option>
+                            <option value="Charcoal">Charcoal</option>
+                            <option value="Graphite">Graphite</option>
+                            <option value="Digital art">Digital art</option>
+                            <option value="Sculpture">Sculpture</option>
+                            <option value="Photography">Photography</option>
+                            <option value="Mixed media">Mixed media</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="yearCreated">Year Created:</label>
+                        <input type="number" class="form-control" id="yearCreated" name="yearCreated"
+                            placeholder="Enter Year Created">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price:</label>
+                        <input type="number" class="form-control" id="price" name="price" placeholder="Enter Price">
+                    </div>
+                    <div class="form-group">
+                        <label for="image">Image:</label>
+                        <input type="file" class="form-control-file" id="image" name="image">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="artistID">Artist ID:</label>
+                        <select class="form-control" id="artistID" name="artistID">
+                            <!-- Fetch Artist IDs dynamically from the database -->
+                            <option selected value="">Choose...</option>   
+                            <% 
+                            {artists.forEach(artist => { %>
+                                <option value="<%= artist.artist_id %>">
+                                    <%= artist.name %>
+                                </option>
+                            <% });} %>
+                    
+                        </select>
+                    </div>
+
+                
+                    
+                    <button type="submit" class="btn btn-primary mb-4">Submit</button>
+                </form>
+
+                <script>
+                    function validateForm() {
+
+                        var medium = document.getElementById("medium").value;
+                        var description = document.getElementById("description").value;
+                        var yearCreated = document.getElementById("yearCreated").value;
+                        var price = document.getElementById("price").value;
+                        var image = document.getElementById("image").value;
+                        var artistID = document.getElementById("artistID").value;
+
+                        return true;
+                    }
+                </script>
+            </div>
+        </main>
+
+    </section>
+
+    <%- include('./partials/footer.ejs') %>
+    <%- include('./partials/script.ejs') %>
+
+</body>
+
+</html>
