@@ -1,0 +1,76 @@
+<%- include('./partials/head.ejs') %>
+
+
+    <body>
+
+        <!-- Sidebar -->
+        <%- include('./partials/aside.ejs') %>
+
+
+        <!-- Main Content -->
+        <section class="dashbaord-content">
+            <header>
+                <nav>
+                    <div class="font-change-btn">
+                     
+      <div class="search-btn">
+        <a href="/dashboard" class="btn">Dashboard</a>
+    </div>
+                    </div>
+          
+                </nav>
+            </header>
+            <main>
+                <div class="container mt-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h2 class="mb-3">Add customer</h2>
+                       
+                    </div>
+                    <form action="/add-customer" method="post">
+                      
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input class="form-control" type="text" id="name" name="name" required
+                                placeholder="Name">
+                        </div>
+                     
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input class="form-control" type="email" id="email" name="email" required
+                                placeholder="Email">
+                        </div>
+                      
+                        <div class="form-group">
+                            <label for="street">Street:</label>
+                            <input class="form-control" type="text" id="street" name="street" required
+                                placeholder="Street">
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City:</label>
+                            <input class="form-control" type="text" id="city" name="city" required placeholder="City">
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State:</label>
+                            <input class="form-control" type="text" id="state" name="state" required
+                                placeholder="State">
+                        </div>
+                        <div class="form-group">
+                            <label for="zipcode">Zip Code:</label>
+                            <input class="form-control" type="text" id="zipcode" name="zipcode" required
+                                placeholder="Zip code">
+                        </div>
+                     
+                        <button type="submit" class="btn">Add customer</button>
+                    </form>
+                </div>
+
+
+            </main>
+        </section>
+
+        <%- include('./partials/footer.ejs') %>
+        <%- include('./partials/script.ejs') %>
+
+    </body>
+
+    </html>
