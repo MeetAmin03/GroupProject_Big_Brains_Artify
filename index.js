@@ -123,9 +123,9 @@ app.post("/add-art", async (req, res) => {
 });
 
 // Route to handle delete product
-app.post("/delete-art-piece", async (req, res) => {
+app.post("/delete-art", async (req, res) => {
   try {
-    const artPieceID = req.body.artPieceID;
+    const artPieceID = req.body.art_piece_id;
 
     // Delete art piece from the database
     await pool.query("DELETE FROM art_pieces WHERE art_piece_id = ?", [
@@ -133,10 +133,10 @@ app.post("/delete-art-piece", async (req, res) => {
     ]);
 
     console.log("Art piece deleted successfully");
-    res.redirect("/art-piece-list"); // Redirect to the art piece list page after deletion
+    res.redirect("/art-list"); // Redirect to the art piece list page after deletion
   } catch (err) {
     console.error("Error deleting art piece: " + err.stack);
-    res.status(500).send("Error deleting art piece");
+    res.status(500).send("It has already been sold and cannot be deleted");
   }
 });
 
@@ -276,14 +276,14 @@ app.get("/customers", async (req, res) => {
 
 app.post("/delete-customer", async (req, res) => {
   try {
-    const customerID = req.body.customerID;
+    const customerID = req.body.customer_id;
 
     await pool.query("DELETE FROM customers WHERE customer_id = ?", [
       customerID,
     ]);
 
     console.log("Customer deleted successfully");
-    res.redirect("/customers");
+    res.redirect("/customers"); // Redirect to a page showing the list of customers after deletion
   } catch (err) {
     console.error("Error deleting customer: " + err.stack);
     res.status(500).send("Error deleting customer");
