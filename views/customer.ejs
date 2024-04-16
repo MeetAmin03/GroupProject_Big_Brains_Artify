@@ -1,0 +1,98 @@
+<%- include('./partials/head.ejs') %>
+
+
+  <body>
+
+    <!-- Sidebar -->
+    <%- include('./partials/aside.ejs') %>
+
+    <!-- Main Content -->
+    <section class="dashbaord-content">
+      <header>
+        <nav>
+          <div class="font-change-btn">
+            <div class="search-btn">
+              <a href="/dashboard" class="btn">Dashboard</a>
+          </div>
+
+          </div>
+        
+        </nav>
+      </header>
+      <main class="main-height">
+        <div class="container mt-4">
+
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="mb-3">Customer Records</h2>
+           
+          </div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Customer Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Street</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip Code</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% customers.forEach(function(customer) { %>
+                <tr>
+                  <td>
+                    <%= customer.customer_id %>
+                  </td>
+                  <td>
+                    <%= customer.name %>
+                  </td>
+                 
+                  <td>
+                    <%= customer.email %>
+                  </td>
+                  <td>
+                    <%= customer.street %>
+                  </td>
+                  <td>
+                    <%= customer.city %>
+                  </td>
+                  <td>
+                    <%= customer.state %>
+                  </td>
+                  <td>
+                    <%= customer.zipcode %>
+                  </td>
+              
+                  <td class="d-flex justify-content-evenly">
+                    
+                    <form action="/update-customer" method="get">
+                      <input type="hidden" name="customer_id" value="<%= customer.customer_id %>">
+                      <button type="submit" class="btn">Edit</button>
+                    </form>
+
+                    <form action="/delete-customer" method="post">
+                      <input type="hidden" name="customer_id" value="<%= customer.customer_id %>">
+                      <button type="submit" class="btn">Delete</button>
+                    </form>
+                   
+                  </td>
+                </tr>
+                <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+      </main>
+
+
+    </section>
+
+
+    <%- include('./partials/footer.ejs') %>
+
+    <%- include('./partials/script.ejs') %>
+
+  </body>
+
+  </html>
